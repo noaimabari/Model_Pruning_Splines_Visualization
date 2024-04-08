@@ -1,16 +1,19 @@
 import matplotlib.pyplot as plt
 import torch
 
-def plot_splines(h, N):
+def plot_splines(model):
+  
   """
-  Function to plot splines in FCNet
-  input: h (tuple) - output of layer 1 and layer 2
-         N (int) - square root of number of datapoints 
+  Function to plot splines
+
   """
   L = 2
-  
-  grid = torch.meshgrid(torch.linspace(-L, L, N), 
-                        torch.linspace(- L, L, N))
+  N = 200
+  grid = torch.meshgrid(torch.linspace(-L, L, N),
+                  torch.linspace(- L, L, N))
+                  
+  x = torch.stack([grid[0].reshape(-1), grid[1].reshape(-1)], 1)
+  h = model.get_h1_h2(x)
 
   plt.figure(figsize=(12,4))
 
@@ -37,9 +40,4 @@ def plot_splines(h, N):
   plt.yticks([])
   plt.title('layer1+2')
 
-  plt.show()
-  
-  plt.savefig('mini_test.png')
-
-
-
+  plt.savefig("mini_test.png")

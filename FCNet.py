@@ -15,11 +15,14 @@ class FCNet(torch.nn.Module):
         self.softmax = torch.nn.Softmax()
 
   def forward(self, x):
-        self.h1 = self.linear1(x) 
-        layer1_with_activ = self.activation(self.h1)
-        self.h2 = self.linear2(layer1_with_activ)
-        output = self.softmax(self.h2)
+        h1 = self.linear1(x)
+        layer1_with_activ = self.activation(h1)
+        h2 = self.linear2(layer1_with_activ)
+        output = self.softmax(h2)
         return output
 
-  def get_h1_h2(self):
-    return self.h1, self.h2
+  def get_h1_h2(self, x):
+    h1 = self.linear1(x)
+    h2 = self.linear2(self.activation(h1))
+
+    return h1, h2
