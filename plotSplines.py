@@ -41,3 +41,61 @@ def plot_splines(model):
   plt.title('layer1+2')
 
   plt.savefig("mini_test.png")
+
+
+
+def plot_splines_for_conv2d(model, image_to_study):
+  
+  """
+  Function to plot the splines of each kernel in each layer of a conv net 
+  """
+
+  N = 200
+  T = 28
+  # image_to_study = np.random.randn(T, T) -> we are instead using a test image to study the splines
+
+  direction = torch.randn(T, T)
+
+  alpha, beta = torch.meshgrid(torch.linspace(0, 2, N), torch.linspace(-1, 1, N))
+  alpha = alpha.reshape(-1)[:, None, None]
+  beta = beta.reshape(-1)[:, None, None]
+
+  x = alpha * image_to_study + beta * direction
+
+  h = model.get_h1_h2(x.unsqueeze(1))
+
+  plt.figure(figsize=(12, 4))
+
+  plt.subplot(1, 2, 1)
+  for k in range(4):
+      for i in range(T):
+          for j in range(T):
+              # print(i, j)
+              plt.contour(
+                  alpha.reshape((N, N)),
+                  beta.reshape((N, N)),
+                  h[0][:, k, i, j].detach().numpy().reshape((N, N)),
+                  levels=[0],
+                  colors="b",
+              )
+  plt.xticks([])
+  plt.yticks([])
+  plt.title("layer1")
+
+  plt.subplot(1, 2, 2)
+  for k in range(3):
+      for i in range(T//2):
+          for j in range(T//2):
+              plt.contour(
+                  alpha.reshape((N, N)),
+                  beta.reshape((N, N)),
+                  h[1][:, k, i, j].detach().numpy().reshape((N, N)),
+                  levels=[0],
+                  colors="b",
+              )
+  plt.xticks([])
+  plt.yticks([])
+  plt.title("layer2")
+
+  plt.savefig("mini_conv.png")
+
